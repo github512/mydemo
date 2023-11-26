@@ -1,0 +1,26 @@
+
+
+1、创建一个django project
+
+django-admin.py startproject mysite
+
+
+
+2、在mysite目录下创建应用
+
+python manage.py startapp blog
+
+
+3、同步更改数据库表或字段
+
+python manage.py makemigrations
+python manage.py migrate
+
+
+
+4、Django 项目环境终端
+
+python manage.py dbshell
+
+
+

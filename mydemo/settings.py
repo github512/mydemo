@@ -19,6 +19,10 @@ from conf.env import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
+sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -128,9 +132,11 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 
+print(BASE_DIR)
+
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-#STATICFILES_DIRS = [os.path.join(BASE_DIR, "/apps/static"),]#country是生成的APP
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "/static"),]#country是生成的APP
 
 
 # Default primary key field type
