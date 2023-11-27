@@ -23,4 +23,10 @@ python manage.py migrate
 python manage.py dbshell
 
 
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+encoding='utf-8'
+
+
+
 
