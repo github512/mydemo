@@ -5,8 +5,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Course
-from .serializers import CourseSerializer
+from apps.music.models import Course
+from apps.music.serializers import CourseSerializer
 
 @api_view(["GET","POST"])
 def course_list(request):

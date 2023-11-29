@@ -3,8 +3,8 @@
 
 
 from django.urls import path,include
-from apps.music import views,base
-
+from apps.music.api import views,base
+ 
 urlpatterns = [
     path('fbv/list',base.course_list ,name="fbv-list")
 ]
