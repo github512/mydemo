@@ -38,3 +38,8 @@ def html(request):
     return render(request, 'index.html',a)
 
 
+def home(request):
+    return render(request, 'home.html')
+
+
+

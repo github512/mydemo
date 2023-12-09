@@ -1,112 +1,58 @@
-from django.db.models import Q, IntegerField, Case, When, Value
-from django.db.models.functions import Cast
-from django_filters import rest_framework as filters
-from rest_framework.generics import GenericAPIView, ListAPIView
-from rest_framework.parsers import JSONParser
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 
-from .filters import ClientListAPIFilter
-from .serailizers import *
-from users.api.views import StandardResultsSetPagination
-from users.api.permission_class import HasPermission
+# Create your views here.
+import json
+from django.http import JsonResponse,HttpResponse
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
-class ClientQuickListView(ListAPIView):
-    http_method_names = ['get']
-    serializer_class = ClientQuickListSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
-    filterset_class = ClientListAPIFilter
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [HasPermission('clients.view_client')]
-
-    def get_queryset(self):
-        qs = Client.objects.all().sorted_by_client_code()
-        return qs
+course_dict = {
+	'name': '课程名称',
+	'introduction ': '课程介绍',
+	'price': 50 
+}
 
 
-class ClientList(ListAPIView):
-    http_method_names = ['get']
 
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [HasPermission('clients.view_client')]
+#使用原生的API接口
+def course_list(request):
 
-    pagination_class = StandardResultsSetPagination
-    serializer_class = ClientCreateSerializer
-    queryset = Client.objects.all().order_by('name')
+	if request.method == 'GET':
+		return JsonResponse(course_dict)
+	if request.method =='POST':
+		course = json.loads(request.body.decode('utf-8'))
+		return HttpResponse(json.dumps(course),content_type='application/json')
 
 
-class ClientView(GenericAPIView):
-    http_method_names = ['get', 'post', 'put', 'delete']
 
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [HasPermission('clients.view_client')]
-        elif self.request.method == "POST":
-            return [HasPermission('clients.add_client')]
-        elif self.request.method == "PUT":
-            return [HasPermission('clients.change_client')]
-        elif self.request.method == "DELETE":
-            return [HasPermission('clients.delete_client')]
+#Django CBV 编写API接口
+@method_decorator(csrf_exempt,name='dispatch')
+class CourseList(View):
 
-    def get(self, *args, **kwargs):
-        obj = get_object_or_404(Client, id=kwargs['pk'])
-        slizer = ClientCreateSerializer(instance=obj)
-        return Response(
-            data={
-                'data': slizer.data
-            },
-            status=status.HTTP_200_OK
-        )
+	def get(self,request):
+		return JsonResponse(course_dict)
 
-    def post(self, *args, **kwargs):
-        post_data = JSONParser().parse(self.request)
-        slizer = ClientCreateSerializer(data=post_data)
-        if slizer.is_valid():
-            client = slizer.save()
-            client.created_by = self.request.user
-            client.save()
-            return Response(
-                data={
-                    'status': 'created'
-                },
-                status=status.HTTP_201_CREATED
-            )
-        else:
-            return Response(
-                data={'status': 'bad data', 'errors': slizer.errors},
-                status=status.HTTP_400_BAD_REQUEST)
+	def port(self,request):
+		course = json.loads(request.body.decode('utf-8'))
+		return HttpResponse(json.dumps(course),content_type='application/json')
 
-    def put(self, *args, **kwargs):
-        obj = get_object_or_404(Client, id=kwargs['pk'])
-        post_data = JSONParser().parse(self.request)
-        slizer = ClientCreateSerializer(instance=obj, data=post_data, is_update=True)
-        if slizer.is_valid():
-            client = slizer.save()
-            client.updated_by = self.request.user
-            client.update_timestamp = timezone.now()
-            client.save()
-            return Response(
-                data={
-                    'status': 'updated'
-                },
-                status=status.HTTP_202_ACCEPTED
-            )
-        else:
-            return Response(
-                data={'status': 'bad data', 'errors': slizer.errors},
-                status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, *args, **kwargs):
-        obj = get_object_or_404(Client, id=kwargs['pk'])
-        obj.delete()
-        return Response(
-            data={
-                'status': 'deleted'
-            },
-            status=status.HTTP_202_ACCEPTED
-        )
+
+
+
+#分页、排序、认证、权限、限流等等
+
+
+
+
+
+
+
+
+
+
+
+
+		
